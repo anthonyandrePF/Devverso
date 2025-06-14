@@ -1,0 +1,295 @@
+/* Estilos generales para la página de cursos */
+body.cursos-page {
+  background: linear-gradient(to bottom, #0f172a, #1e293b);
+  color: #f1f5f9;
+}
+
+body{
+  margin-top: 5rem;
+}
+
+/* Estilos para el efecto de hover */
+.navbar-nav .nav-item .nav-link {
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+
+/* Resaltar el ítem activo */
+.navbar-nav .nav-item .nav-link.active {
+  color: #f39c12; /* Color dorado para el ítem activo */
+  font-weight: bold; /* Opcional: Poner en negrita */
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.7); /* Brillo sutil */
+}
+
+/* Navbar y ajustes de sombra */
+.navbar {
+  background-color: #1e293b; /* Fondo oscuro para el navbar */
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.navbar.scrolled {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Asegurar que no se sobrescriba el fondo cuando sea la página de cursos */
+body.cursos-page .navbar {
+  background: transparent;
+}
+
+
+
+.card-text {
+    flex-grow: 1; /* Empuja el botón hacia abajo */
+  }
+  
+  .carousel-item {
+    min-height: 350px;
+  }
+  
+  .carousel-item h2 {
+    font-size: 1.5rem;
+  }
+  
+  .carousel-item p {
+    font-size: 0.95rem;
+  }
+  
+  .carousel-item button {
+    font-size: 0.95rem;
+    padding: 0.4rem 1rem;
+  }
+  
+  .accordion-button::after {
+    filter: brightness(10); /* Hace que la flecha sea blanca sin reemplazar el ícono */
+  }
+
+  /* Controles del carrusel */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 50px;
+  height: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+.carousel-control-prev {
+  left: 10px;
+}
+
+.carousel-control-next {
+  right: 10px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: brightness(3);
+}
+  @media (max-width: 768px) {
+    .carousel-item h2 {
+      font-size: 1.3rem;
+    }
+    .carousel-item p {
+      font-size: 0.95rem;
+    }
+    .carousel-item button {
+      font-size: 0.9rem;
+      padding: 0.3rem 0.8rem;
+    }
+    .carousel-item img {
+      max-height: 230px;
+      object-fit: contain;
+    }
+  }
+  @media (max-width: 576px) {
+    .carousel-item {
+      min-height: auto;
+    }
+    .carousel-item img {
+      max-height: 180px;
+      object-fit: contain;
+    }
+  }
+  @media (max-width: 430px) {
+    .carousel-item h2 {
+      font-size: 1.2rem;
+    }
+    .carousel-item p {
+      font-size: 0.9rem;
+    }
+    .carousel-item button {
+      font-size: 0.85rem;
+      padding: 0.3rem 0.7rem;
+    }
+    .carousel-item img {
+      max-height: 150px;
+      object-fit: contain;
+    }
+    .carousel-item {
+      height: 470px;
+      max-height: 500px;
+    }
+  }
+  
+  @media (max-width: 280px) {
+    .carousel-item h2 {
+      font-size: 1.1rem;
+    }
+    .carousel-item p {
+      font-size: 0.75rem;
+    }
+    .carousel-item button {
+      font-size: 0.8rem;
+      padding: 0.2rem 0.5rem;
+    }
+    .carousel-item {
+      height: 450px;
+      max-height: 550px;
+    }
+  }
+
+ /* Estilo de los elementos del carrito */
+.carrito-item {
+  display: flex; /* Usa flexbox para una disposición flexible */
+  align-items: center; /* Alinea verticalmente los elementos */
+  justify-content: space-between; /* Distribuye el espacio entre los elementos */
+  margin-bottom: 1rem;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.1); /* Fondo semi-transparente */
+  border-radius: 8px; /* Bordes redondeados */
+  transition: transform 0.2s ease; /* Efecto hover suave */
+}
+
+.carrito-item:hover {
+  transform: scale(1.02); /* Amplía ligeramente el elemento al pasar el ratón */
+}
+
+.carrito-item img {
+  width: 100px; /* Ancho fijo para las imágenes */
+  height: 60px; /* Altura fija para las imágenes */
+  object-fit: cover; /* Asegura que la imagen se ajuste correctamente */
+  border-radius: 8px; /* Bordes redondeados para las imágenes */
+  margin-right: 10px; /* Espacio entre la imagen y el texto */
+  flex-shrink: 0; /* Evita que la imagen se reduzca en pantallas pequeñas */
+}
+
+.carrito-item-info {
+  flex: 1; /* Hace que el contenedor de información ocupe el espacio restante */
+  display: flex; /* Usa flexbox para organizar el contenido */
+  flex-direction: column; /* Coloca los elementos en columna */
+  justify-content: center; /* Centra verticalmente el contenido */
+  overflow: hidden; /* Maneja el desbordamiento de texto largo */
+}
+
+.carrito-item-info p {
+  margin: 0; /* Elimina márgenes innecesarios */
+  font-size: 14px; /* Tamaño de fuente consistente */
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  overflow: hidden; /* Oculta el texto que excede el ancho */
+  text-overflow: ellipsis; /* Agrega puntos suspensivos para texto largo */
+}
+
+.carrito-item-info p:first-child {
+  font-weight: bold; /* Nombre del curso en negrita */
+  margin-bottom: 5px; /* Espaciado entre el nombre y el precio */
+}
+
+/* Icono de eliminar */
+.carrito-item i.bi-trash-fill {
+  cursor: pointer;
+  color: red;
+  font-size: 18px;
+  margin-left: auto; /* Alinea el icono a la derecha */
+  transition: color 0.2s ease;
+}
+
+.carrito-item i.bi-trash-fill:hover {
+  color: darkred;
+}
+
+/* Estilo del total */
+#carrito-total {
+  font-size: 18px; /* Tamaño de fuente para el total */
+  font-weight: bold; /* Negrita para destacar el total */
+  text-align: right; /* Alineación a la derecha */
+  margin-top: 10px; /* Espaciado superior */
+}
+
+/* Separador */
+hr {
+  border: 0; /* Sin borde predeterminado */
+  height: 1px; /* Altura del separador */
+  background: rgba(255, 255, 255, 0.2); /* Color semi-transparente */
+  margin: 20px 0; /* Espaciado alrededor del separador */
+}
+
+/* Estilo personalizado para los cards */
+.custom-card {
+  background-color: #0f172a; /* Fondo oscuro */
+  border: none; /* Sin borde */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
+}
+
+.custom-card:hover {
+  transform: translateY(-10px); /* Levantar ligeramente el card */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); /* Sombra al hacer hover */
+}
+
+/* Asegurar que el texto dentro del card sea legible */
+.custom-card .card-title,
+.custom-card .card-text,
+.custom-card .card-price {
+  color: white; /* Texto blanco para contraste */
+}
+
+.comprar-curso span {
+  pointer-events: none;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column; /* Distribuye los elementos verticalmente */
+  padding: 1rem; /* Ajusta el padding según sea necesario */
+  flex-grow: 1; /* Hace que el card-body ocupe todo el espacio disponible */
+}
+
+@media (max-width: 1200px) {
+  .btn {
+    padding: 0.375rem 0.75rem; 
+    font-size: 0.875rem; 
+  }
+
+  .card-price {
+    font-size: 0.975rem; 
+  }
+}
+
+
+
+/* estilos para perfil.html */
+
+.username-glow {
+  color: #fff;
+  text-shadow:
+    0 0 5px #00eaff,
+    0 0 10px #00eaff,
+    0 0 20px #00eaff,
+    0 0 40px #00eaff;
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow:
+      0 0 5px #00eaff,
+      0 0 10px #00eaff,
+      0 0 20px #00eaff,
+      0 0 40px #00eaff;
+  }
+  to {
+    text-shadow:
+      0 0 10px #fff,
+      0 0 20px #00eaff,
+      0 0 30px #00eaff,
+      0 0 60px #00eaff;
+  }
+}

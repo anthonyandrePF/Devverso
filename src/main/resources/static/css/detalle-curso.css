@@ -1,0 +1,193 @@
+
+  h1, h2, h3, h4 {
+    font-weight: 700;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .encabezado {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: #161b22;
+    border-radius: 12px;
+    padding: 2rem;
+  }
+  
+  .encabezado h3 {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+  }
+  
+  .descripcion {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+
+  
+  .info-extra {
+    margin-top: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .temario {
+    background-color: #161b22;
+    border-radius: 12px;
+    padding: 2rem;
+  }
+  
+  .temario h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .busqueda input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    background-color: #0d1117;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+  }
+  
+  .modulo {
+    margin-bottom: 2rem;
+  }
+  
+  .modulo h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .modulo .gratis {
+    background-color: #238636;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    margin-left: 10px;
+  }
+  
+  .duracion {
+    float: right;
+    color: #8b949e;
+  }
+  
+  aside.info-lateral {
+    background-color: #161b22;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+  
+  aside .bloque {
+    margin-bottom: 2rem;
+  }
+  
+  aside h4 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+
+  
+
+  
+  @media (max-width: 768px) {
+    .encabezado {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .imagen-curso img {
+      margin-top: 2rem;
+    }
+  
+    .acciones {
+      justify-content: center;
+    }
+  }
+  
+  /* Estilo de los elementos del carrito */
+.carrito-item {
+  display: flex; /* Usa flexbox para una disposición flexible */
+  align-items: center; /* Alinea verticalmente los elementos */
+  justify-content: space-between; /* Distribuye el espacio entre los elementos */
+  margin-bottom: 1rem;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.1); /* Fondo semi-transparente */
+  border-radius: 8px; /* Bordes redondeados */
+  transition: transform 0.2s ease; /* Efecto hover suave */
+}
+
+.carrito-item:hover {
+  transform: scale(1.02); /* Amplía ligeramente el elemento al pasar el ratón */
+}
+
+.carrito-item img {
+  width: 100px; /* Ancho fijo para las imágenes */
+  height: 60px; /* Altura fija para las imágenes */
+  object-fit: cover; /* Asegura que la imagen se ajuste correctamente */
+  border-radius: 8px; /* Bordes redondeados para las imágenes */
+  margin-right: 10px; /* Espacio entre la imagen y el texto */
+  flex-shrink: 0; /* Evita que la imagen se reduzca en pantallas pequeñas */
+}
+
+.carrito-item-info {
+  flex: 1; /* Hace que el contenedor de información ocupe el espacio restante */
+  display: flex; /* Usa flexbox para organizar el contenido */
+  flex-direction: column; /* Coloca los elementos en columna */
+  justify-content: center; /* Centra verticalmente el contenido */
+  overflow: hidden; /* Maneja el desbordamiento de texto largo */
+}
+
+.carrito-item-info p {
+  margin: 0; /* Elimina márgenes innecesarios */
+  font-size: 14px; /* Tamaño de fuente consistente */
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  overflow: hidden; /* Oculta el texto que excede el ancho */
+  text-overflow: ellipsis; /* Agrega puntos suspensivos para texto largo */
+}
+
+.carrito-item-info p:first-child {
+  font-weight: bold; /* Nombre del curso en negrita */
+  margin-bottom: 5px; /* Espaciado entre el nombre y el precio */
+}
+
+/* Icono de eliminar */
+.carrito-item i.bi-trash-fill {
+  cursor: pointer;
+  color: red;
+  font-size: 18px;
+  margin-left: auto; /* Alinea el icono a la derecha */
+  transition: color 0.2s ease;
+}
+
+.carrito-item i.bi-trash-fill:hover {
+  color: darkred;
+}
+
+/* Estilo del total */
+#carrito-total {
+  font-size: 18px; /* Tamaño de fuente para el total */
+  font-weight: bold; /* Negrita para destacar el total */
+  text-align: right; /* Alineación a la derecha */
+  margin-top: 10px; /* Espaciado superior */
+}
+
+/* Separador */
+hr {
+  border: 0; /* Sin borde predeterminado */
+  height: 1px; /* Altura del separador */
+  background: rgba(255, 255, 255, 0.2); /* Color semi-transparente */
+  margin: 20px 0; /* Espaciado alrededor del separador */
+}

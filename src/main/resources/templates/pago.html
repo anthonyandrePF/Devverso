@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Pago - CodeXpert</title>
+    <link rel="icon" th:href="@{/img/programacion.png}" type="image/png"/>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+
+    <style>
+        body {
+          background-color: #31353a;
+          color: white;
+        }
+        .container{
+          margin-top: 8rem;
+        }
+        .card {
+          background-color: rgba(255, 255, 255, 0.658);
+          border: none;
+          backdrop-filter: blur(10px);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .card-body {
+          padding: 20px;
+        }
+        .form-control {
+          background-color: rgb(218, 214, 214);
+          color: rgb(0, 0, 0);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .form-control:focus {
+          border-color: #0d6efd;
+          box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .btn-primary {
+          background-color: #0d6efd;
+          border-color: #0d6efd;
+          margin-top: 1rem;
+        }
+        .btn-primary:hover {
+          background-color: #0a58ca;
+          border-color: #0a58ca;
+        }
+        .payment-methods {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .payment-methods img {
+          width: 50px;
+          height: 30px;
+        }
+        .img,
+        svg {
+          width: 2.5rem;
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<nav class="navbar bg-dark fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand"  th:href="@{/}">
+            <img th:src="@{/img/LOGO.png}" alt="logo" class="logo" style="margin-left: 1rem"/>
+        </a>
+    </div>
+</nav>
+
+<!-- Contenido principal -->
+<div class="container ">
+    <div class="row">
+        <!-- Sección izquierda: Resumen de la compra -->
+        <div class="col-md-6">
+            <h2>Resumen de tu compra</h2>
+            <hr />
+            <div class="card mb-3">
+                <div class="card-body">
+                    <!-- Contenedor para los cursos del carrito -->
+                    <div id="resumen-carrito"></div>
+                    <hr />
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Total:</span>
+                        <span id="carrito-total">S/0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección derecha: Formulario de pago -->
+        <!-- Sección derecha: Formulario de pago -->
+        <div class="col-md-6">
+            <h2>Elige un método de pago en soles</h2>
+            <hr />
+
+            <!-- Radio buttons para seleccionar el método de pago -->
+            <div class="mb-3">
+                <div class="form-check payment-methods">
+                    <input
+                            class="form-check-input me-2"
+                            type="radio"
+                            name="paymentMethod"
+                            id="creditCard"
+                            value="creditCard"
+                            checked
+                    />
+                    <label class="form-check-label" for="creditCard"
+                    >Tarjeta de crédito/débito</label
+                    >
+                    <div class="payment-methods ms-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50">
+                            <path d="M 5 7 C 2.242188 7 0 9.242188 0 12 L 0 38 C 0 40.757813 2.242188 43 5 43 L 45 43 C 47.757813 43 50 40.757813 50 38 L 50 12 C 50 9.242188 47.757813 7 45 7 Z M 29.6875 19.40625 C 31.050781 19.40625 32.46875 19.96875 32.46875 19.96875 L 31.96875 22.40625 C 31.96875 22.40625 30.890625 21.6875 29.9375 21.6875 C 28.46875 21.6875 27.9375 22.167969 27.9375 22.8125 C 27.9375 24.074219 32.03125 24.296875 32.03125 27.125 C 32.03125 29.476563 29.113281 31.09375 27 31.09375 C 24.886719 31.09375 23.78125 30.46875 23.78125 30.46875 L 24.3125 28.09375 C 24.3125 28.09375 25.417969 28.75 27.125 28.75 C 28.828125 28.75 29.0625 28.023438 29.0625 27.71875 C 29.0625 25.914063 25 26.417969 25 22.90625 C 25 20.964844 26.585938 19.40625 29.6875 19.40625 Z M 16.46875 19.625 L 19.625 19.625 L 15.125 30.75 L 11.875 30.75 L 9.5 21.75 C 9.5 21.75 11.996094 23.023438 13.53125 26.46875 C 13.597656 26.886719 13.78125 27.5625 13.78125 27.5625 Z M 20.78125 19.625 L 23.78125 19.625 L 22 30.75 L 19.03125 30.75 Z M 36.8125 19.625 L 39.90625 19.625 L 42.1875 30.75 L 39.5 30.75 L 39.1875 29.15625 L 35.5 29.15625 L 34.90625 30.75 L 31.96875 30.75 Z M 6.25 19.65625 L 10.8125 19.65625 C 11.976563 19.65625 12.40625 20.75 12.40625 20.75 L 13.40625 25.8125 C 12.054688 21.453125 6.25 19.65625 6.25 19.65625 Z M 37.9375 22.84375 L 36.3125 27.03125 L 38.75 27.03125 Z"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50">
+                            <path d="M 5 7 C 2.25 7 0 9.25 0 12 L 0 38 C 0 40.75 2.25 43 5 43 L 45 43 C 47.75 43 50 40.75 50 38 L 50 12 C 50 9.25 47.75 7 45 7 Z M 5 9 L 45 9 C 46.667969 9 48 10.332031 48 12 L 48 38 C 48 39.667969 46.667969 41 45 41 L 5 41 C 3.332031 41 2 39.667969 2 38 L 2 12 C 2 10.332031 3.332031 9 5 9 Z M 17 13 C 10.382813 13 5 18.382813 5 25 C 5 31.617188 10.382813 37 17 37 C 20.078125 37 22.875 35.816406 25 33.90625 C 27.125 35.816406 29.925781 37 33 37 C 39.617188 37 45 31.617188 45 25 C 45 18.382813 39.617188 13 33 13 C 29.925781 13 27.125 14.183594 25 16.09375 C 22.875 14.183594 20.078125 13 17 13 Z M 33 15 C 38.535156 15 43 19.464844 43 25 C 43 30.535156 38.535156 35 33 35 C 30.449219 35 28.109375 34.066406 26.34375 32.5 C 27.996094 30.441406 29 27.839844 29 25 C 29 22.160156 27.996094 19.558594 26.34375 17.5 C 28.109375 15.933594 30.449219 15 33 15 Z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de tarjeta de crédito -->
+            <div id="creditCardForm" class="card mb-3">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="cardNumber" class="form-label"
+                        >No. de tarjeta</label
+                        >
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="cardNumber"
+                                placeholder="Ingresa el número de tarjeta"
+                                required
+                        />
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label for="expirationDate" class="form-label"
+                            >Expiración</label
+                            >
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="expirationDate"
+                                    placeholder="MM/YY"
+                                    required
+                            />
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="cvv" class="form-label">CVV</label>
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="cvv"
+                                    placeholder="CVV"
+                                    required
+                            />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cardHolderName" class="form-label"
+                        >Nombre en la tarjeta</label
+                        >
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="cardHolderName"
+                                placeholder="Ingresa tu nombre"
+                                required
+                        />
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label for="documentType" class="form-label"
+                            >Tipo de documento</label
+                            >
+                            <select class="form-select" id="documentType" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="DNI">DNI</option>
+                                <option value="Pasaporte">Pasaporte</option>
+                                <option value="Carnet de extranjería">
+                                    Carnet de extranjería
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="documentNumber" class="form-label"
+                            >Número de documento</label
+                            >
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="documentNumber"
+                                    placeholder="Ingresa tu número de documento"
+                                    required
+                            />
+                        </div>
+                    </div>
+                    <button
+                            type="button"
+                            class="btn btn-primary w-100"
+                            id="payWithCreditCard"
+                    >
+                        Pagar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Radio button para Yape/Plin -->
+            <div class="mb-3">
+                <div class="form-check payment-methods">
+                    <input
+                            class="form-check-input me-2"
+                            type="radio"
+                            name="paymentMethod"
+                            id="yapePlin"
+                            value="yapePlin"
+                    />
+                    <label class="form-check-label" for="yapePlin">Yape/Plin</label>
+                </div>
+                <div class="payment-methods ms-3">
+
+                </div>
+            </div>
+
+            <!-- Formulario de Yape/Plin -->
+            <div id="yapePlinForm" class="card mb-3" style="display: none">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="yapeNumber" class="form-label"
+                        >Número de cuenta de Yape/Plin</label
+                        >
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="yapeNumber"
+                                placeholder="Ingresa tu número de celular"
+                                required
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="approvalCode" class="form-label"
+                        >Código de aprobación</label
+                        >
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="approvalCode"
+                                placeholder="Ingresa el código de aprobación"
+                                required
+                        />
+                    </div>
+                    <button
+                            type="button"
+                            class="btn btn-success w-100"
+                            id="payWithYapePlin"
+                    >
+                        Pagar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts de Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/pago.js}"></script>
+</body>
+</html>
