@@ -52,10 +52,14 @@
                     <h2 class="section-title text-center mb-4" th:text="${curso.id} != null ? 'Editar Curso' : 'Agregar Curso'">
                         Agregar Curso
                     </h2>
-                    <form th:action="${curso.id} != null ? '@{/admin/cursos/update}' : '@{/admin/cursos/guardar}'" 
+
+                    <!-- Formulario AGREGAR -->
+                    <form th:action="@{/admin/cursos/guardar}" 
                           th:object="${curso}" 
                           method="post"
-                          enctype="multipart/form-data">
+                          enctype="multipart/form-data"
+                          id="cursoForm"
+                          th:if="${curso.id} == null">
                         
                         <div th:if="${curso.id} != null">
                             <input type="hidden" th:field="*{id}" />
@@ -116,23 +120,140 @@
 
                         <div class="mb-3">
                             <label class="form-label">Imagen del curso</label>
-                            <input type="file" accept="image/*" class="form-control" required />
+                            <input type="file" accept="image/*" class="form-control" name="imagenFile" />
                             <div class="form-text">Formatos permitidos: JPG, PNG (máx. 5MB)</div>
                         </div>
 
+                        <!-- Temario dinámico -->
                         <div class="mb-3">
-                            <label class="form-label">Temario (JSON)</label>
-                            <textarea th:field="*{temario}" class="form-control" rows="5" required></textarea>
+                            <label class="form-label">Temario</label>
+                            <div id="temario-list-add"></div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addTemario('add')">Agregar tema</button>
+                            <textarea th:field="*{temario}" id="temario-json-add" class="form-control d-none" rows="5" required></textarea>
                         </div>
 
+                        <!-- Aprendizajes dinámicos -->
                         <div class="mb-3">
                             <label class="form-label">Aprendizajes</label>
-                            <textarea th:field="*{aprendizajes}" class="form-control" rows="3" required></textarea>
+                            <div id="aprendizajes-list-add"></div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addAprendizaje('add')">Agregar aprendizaje</button>
+                            <textarea th:field="*{aprendizajes}" id="aprendizajes-json-add" class="form-control d-none" rows="3" required></textarea>
+                        </div>
+
+                        <!-- Público objetivo dinámico -->
+                        <div class="mb-3">
+                            <label class="form-label">Público objetivo</label>
+                            <div id="publico-list-add"></div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addPublico('add')">Agregar público</button>
+                            <textarea th:field="*{publico}" id="publico-json-add" class="form-control d-none" rows="3" required></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a th:href="@{/perfil-admin}" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary btn-submit">
+                                <i class="bi bi-check-circle me-2"></i>Guardar curso
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Formulario EDITAR -->
+                    <form th:action="@{/admin/cursos/update}" 
+                          th:object="${curso}" 
+                          method="post"
+                          enctype="multipart/form-data"
+                          id="cursoFormEdit"
+                          th:if="${curso.id} != null">
+                        
+                        <div th:if="${curso.id} != null">
+                            <input type="hidden" th:field="*{id}" />
+                            <input type="hidden" th:field="*{imagen}" />
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nombre del curso</label>
+                                <input type="text" th:field="*{nombre}" class="form-control" required />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Profesor</label>
+                                <input type="text" th:field="*{profesorNombre}" class="form-control" required />
+                            </div>
                         </div>
 
                         <div class="mb-3">
+                            <label class="form-label">Descripción del curso</label>
+                            <textarea th:field="*{descripcion}" class="form-control" rows="3" required></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Fecha de inicio</label>
+                                <input type="date" th:field="*{fecha}" class="form-control" required />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Duración</label>
+                                <input type="text" th:field="*{duracion}" class="form-control" placeholder="e.g. 10 horas" required />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Nivel</label>
+                                <select th:field="*{nivel}" class="form-select" required>
+                                    <option value="Básico">Básico</option>
+                                    <option value="Intermedio">Intermedio</option>
+                                    <option value="Avanzado">Avanzado</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Precio</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">S/</span>
+                                    <input type="number" step="0.01" th:field="*{precio}" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Categoría</label>
+                                <select th:field="*{categoriaId}" class="form-select" required>
+                                    <option value="1">Backend</option>
+                                    <option value="2">Frontend</option>
+                                    <option value="3">Base de datos</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Imagen del curso</label>
+                            <input type="file" accept="image/*" class="form-control" name="imagenFile" />
+                            <div class="form-text">Formatos permitidos: JPG, PNG (máx. 5MB)</div>
+                            <div th:if="${curso.imagen}">
+                                <img th:src="@{${curso.imagen}}" alt="Imagen actual" class="img-thumbnail mt-2" style="max-width: 200px;">
+                                <div class="small text-muted">Imagen actual</div>
+                            </div>
+                        </div>
+
+                        <!-- Temario dinámico -->
+                        <div class="mb-3">
+                            <label class="form-label">Temario</label>
+                            <div id="temario-list-edit"></div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addTemario('edit')">Agregar tema</button>
+                            <textarea th:field="*{temario}" id="temario-json-edit" class="form-control d-none" rows="5" required></textarea>
+                        </div>
+
+                        <!-- Aprendizajes dinámicos -->
+                        <div class="mb-3">
+                            <label class="form-label">Aprendizajes</label>
+                            <div id="aprendizajes-list-edit"></div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addAprendizaje('edit')">Agregar aprendizaje</button>
+                            <textarea th:field="*{aprendizajes}" id="aprendizajes-json-edit" class="form-control d-none" rows="3" required></textarea>
+                        </div>
+
+                        <!-- Público objetivo dinámico -->
+                        <div class="mb-3">
                             <label class="form-label">Público objetivo</label>
-                            <textarea th:field="*{publico}" class="form-control" rows="3" required></textarea>
+                            <div id="publico-list-edit"></div>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addPublico('edit')">Agregar público</button>
+                            <textarea th:field="*{publico}" id="publico-json-edit" class="form-control d-none" rows="3" required></textarea>
                         </div>
 
                         <div class="d-flex justify-content-between mt-4">
@@ -147,5 +268,134 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+        // --- Temario dinámico ---
+        function addTemario(tipo, titulo = '', descripcion = '', contenido = []) {
+            const listId = tipo === 'edit' ? 'temario-list-edit' : 'temario-list-add';
+            const temarioDiv = document.createElement('div');
+            temarioDiv.className = 'temario-item border rounded p-2 mb-2';
+            temarioDiv.innerHTML = `
+                <input type="text" class="form-control mb-1" placeholder="Título del tema" value="${titulo}" data-tipo="titulo">
+                <input type="text" class="form-control mb-1" placeholder="Descripción" value="${descripcion}" data-tipo="descripcion">
+                <div class="contenido-list mb-1"></div>
+                <button type="button" class="btn btn-outline-secondary btn-sm mb-1" onclick="addContenido(this)">Agregar contenido</button>
+                <button type="button" class="btn btn-danger btn-sm mb-1" onclick="this.parentElement.remove()">Eliminar tema</button>
+            `;
+            document.getElementById(listId).appendChild(temarioDiv);
+            // Si hay contenido, cargarlo
+            if (contenido && Array.isArray(contenido)) {
+                contenido.forEach(c => addContenido(temarioDiv.querySelector('.btn-outline-secondary'), c.titulo, c.duracion));
+            }
+        }
+        function addContenido(btn, titulo = '', duracion = '') {
+            const contList = btn.parentElement.querySelector('.contenido-list');
+            const contDiv = document.createElement('div');
+            contDiv.className = 'contenido-item input-group mb-1';
+            contDiv.innerHTML = `
+                <input type="text" class="form-control" placeholder="Título contenido" value="${titulo}" data-tipo="titulo">
+                <input type="text" class="form-control" placeholder="Duración (ej: 10:00)" value="${duracion}" data-tipo="duracion">
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">X</button>
+            `;
+            contList.appendChild(contDiv);
+        }
+
+        // --- Aprendizajes dinámicos ---
+        function addAprendizaje(tipo, valor = '') {
+            const listId = tipo === 'edit' ? 'aprendizajes-list-edit' : 'aprendizajes-list-add';
+            const div = document.createElement('div');
+            div.className = 'aprendizaje-item input-group mb-1';
+            div.innerHTML = `
+                <input type="text" class="form-control" placeholder="Aprendizaje" value="${valor}">
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">X</button>
+            `;
+            document.getElementById(listId).appendChild(div);
+        }
+
+        // --- Público objetivo dinámico ---
+        function addPublico(tipo, valor = '') {
+            const listId = tipo === 'edit' ? 'publico-list-edit' : 'publico-list-add';
+            const div = document.createElement('div');
+            div.className = 'publico-item input-group mb-1';
+            div.innerHTML = `
+                <input type="text" class="form-control" placeholder="Público objetivo" value="${valor}">
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">X</button>
+            `;
+            document.getElementById(listId).appendChild(div);
+        }
+
+        // --- Al enviar el formulario, convertir a JSON ---
+        function handleFormSubmit(tipo) {
+            const prefix = tipo === 'edit' ? 'edit' : 'add';
+            // Temario
+            const temarioArr = [];
+            document.querySelectorAll(`#temario-list-${prefix} .temario-item`).forEach(item => {
+                const titulo = item.querySelector('input[data-tipo="titulo"]').value;
+                const descripcion = item.querySelector('input[data-tipo="descripcion"]').value;
+                const contenidoArr = [];
+                item.querySelectorAll('.contenido-item').forEach(cont => {
+                    contenidoArr.push({
+                        titulo: cont.querySelector('input[data-tipo="titulo"]').value,
+                        duracion: cont.querySelector('input[data-tipo="duracion"]').value
+                    });
+                });
+                temarioArr.push({titulo, descripcion, contenido: contenidoArr});
+            });
+            document.getElementById(`temario-json-${prefix}`).value = JSON.stringify(temarioArr);
+
+            // Aprendizajes
+            const aprendizajesArr = [];
+            document.querySelectorAll(`#aprendizajes-list-${prefix} .aprendizaje-item input`).forEach(inp => {
+                if (inp.value.trim()) aprendizajesArr.push(inp.value.trim());
+            });
+            document.getElementById(`aprendizajes-json-${prefix}`).value = JSON.stringify(aprendizajesArr);
+
+            // Público objetivo
+            const publicoArr = [];
+            document.querySelectorAll(`#publico-list-${prefix} .publico-item input`).forEach(inp => {
+                if (inp.value.trim()) publicoArr.push(inp.value.trim());
+            });
+            document.getElementById(`publico-json-${prefix}`).value = JSON.stringify(publicoArr);
+        }
+
+        // --- Si se está editando o agregando, cargar datos existentes ---
+        window.addEventListener('DOMContentLoaded', () => {
+            // Para agregar
+            if (document.getElementById('cursoForm')) {
+                try {
+                    const temario = JSON.parse(document.getElementById('temario-json-add').value || '[]');
+                    temario.forEach(t => addTemario('add', t.titulo, t.descripcion, t.contenido));
+                } catch {}
+                try {
+                    const aprendizajes = JSON.parse(document.getElementById('aprendizajes-json-add').value || '[]');
+                    aprendizajes.forEach(a => addAprendizaje('add', a));
+                } catch {}
+                try {
+                    const publico = JSON.parse(document.getElementById('publico-json-add').value || '[]');
+                    publico.forEach(p => addPublico('add', p));
+                } catch {}
+                document.getElementById('cursoForm').addEventListener('submit', function(e) {
+                    handleFormSubmit('add');
+                });
+            }
+            // Para editar
+            if (document.getElementById('cursoFormEdit')) {
+                try {
+                    const temario = JSON.parse(document.getElementById('temario-json-edit').value || '[]');
+                    temario.forEach(t => addTemario('edit', t.titulo, t.descripcion, t.contenido));
+                } catch {}
+                try {
+                    const aprendizajes = JSON.parse(document.getElementById('aprendizajes-json-edit').value || '[]');
+                    aprendizajes.forEach(a => addAprendizaje('edit', a));
+                } catch {}
+                try {
+                    const publico = JSON.parse(document.getElementById('publico-json-edit').value || '[]');
+                    publico.forEach(p => addPublico('edit', p));
+                } catch {}
+                document.getElementById('cursoFormEdit').addEventListener('submit', function(e) {
+                    handleFormSubmit('edit');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

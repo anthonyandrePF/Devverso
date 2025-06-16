@@ -90,14 +90,14 @@
       <div class="row mt-4">
         <div class="col-md-3 mb-3" th:each="curso : ${cursos}">
           <div class="card h-100">
-            <img th:src="${curso.imagen}" class="card-img-top" th:alt="${curso.nombre}" />
+            <img th:src="@{${curso.imagen}}" class="card-img-top" th:alt="${curso.nombre}" />
             <div class="card-body">
               <h5 class="card-title" th:text="${curso.nombre}">Nombre Curso</h5>
               <p class="card-text" th:text="${curso.descripcion}">Descripción</p>
             </div>
             <div class="card-footer">
               <a th:href="@{'/admin/cursos/edit/' + ${curso.id}}" class="btn btn-sm btn-warning">Editar</a>
-              <a th:href="@{'/admin/cursos/delete/' + ${curso.id}}" class="btn btn-sm btn-danger">Eliminar</a>
+              <a th:href="@{'/admin/cursos/delete/' + ${curso.id}}" class="btn btn-sm btn-danger" onclick="deleteCourse(event, this.href);">Eliminar</a>
             </div>
           </div>
         </div>
@@ -140,6 +140,33 @@
     function showSection(sectionId) {
       document.getElementById('sectionCursos').style.display = sectionId === 'sectionCursos' ? 'block' : 'none';
       document.getElementById('sectionVentas').style.display = sectionId === 'sectionVentas' ? 'block' : 'none';
+    }
+    
+    // Nueva función deleteCourse utilizando SweetAlert2
+    function deleteCourse(event, url) {
+      event.preventDefault();
+      Swal.fire({
+        title: 'Confirmar',
+        text: '¿Estás seguro de eliminar este curso?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Eliminado',
+            text: 'El curso ha sido eliminado',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500
+          }).then(() => {
+            window.location.href = url;
+          });
+        }
+      });
     }
   </script>
 </body>

@@ -8,8 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StringUtils;
 
 import jakarta.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 @Controller
@@ -41,7 +45,18 @@ public class AdminCursoController {
 
     // Guardar un curso nuevo
     @PostMapping("/guardar")
-    public String guardarCurso(@ModelAttribute Curso curso) {
+    public String guardarCurso(@ModelAttribute Curso curso, @RequestParam(value = "imagenFile", required = false) MultipartFile imagenFile) {
+        if (imagenFile != null && !imagenFile.isEmpty()) {
+            String nombreArchivo = StringUtils.cleanPath(imagenFile.getOriginalFilename());
+            String rutaDestino = "src/main/resources/static/img/" + nombreArchivo;
+            try {
+                imagenFile.transferTo(new File(rutaDestino));
+                curso.setImagen("/img/" + nombreArchivo);
+            } catch (IOException e) {
+                // Manejo de error
+            }
+        }
+        // Si no se sube imagen y el campo imagen está vacío, puedes asignar una imagen por defecto si lo deseas
         cursoService.save(curso);
         return "redirect:/perfil-admin";
     }
@@ -56,7 +71,18 @@ public class AdminCursoController {
 
     // Actualizar un curso editado
     @PostMapping("/update")
-    public String actualizarCurso(@ModelAttribute Curso curso) {
+    public String actualizarCurso(@ModelAttribute Curso curso, @RequestParam(value = "imagenFile", required = false) MultipartFile imagenFile) {
+        if (imagenFile != null && !imagenFile.isEmpty()) {
+            String nombreArchivo = StringUtils.cleanPath(imagenFile.getOriginalFilename());
+            String rutaDestino = "src/main/resources/static/img/" + nombreArchivo;
+            try {
+                imagenFile.transferTo(new File(rutaDestino));
+                curso.setImagen("/img/" + nombreArchivo);
+            } catch (IOException e) {
+                
+            }
+        }
+        // Si no se sube imagen, el valor de curso.getImagen() viene del campo oculto del formulario (ya no es null)
         cursoService.save(curso);
         return "redirect:/perfil-admin";
     }
@@ -68,4 +94,5 @@ public class AdminCursoController {
         return "redirect:/perfil-admin";
     }
 }
+
 

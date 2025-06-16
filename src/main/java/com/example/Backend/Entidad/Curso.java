@@ -2,6 +2,7 @@ package com.example.Backend.Entidad;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -22,6 +23,7 @@ public class Curso {
     private String descripcion;
 
     @Column(name = "fecha")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fecha;
 
     private String duracion;
