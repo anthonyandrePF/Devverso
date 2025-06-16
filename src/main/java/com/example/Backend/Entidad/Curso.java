@@ -3,6 +3,9 @@ package com.example.Backend.Entidad;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 
 @Entity
 @Table(name = "curso")
@@ -18,30 +21,27 @@ public class Curso {
     private String nombre;
     private String descripcion;
 
-
-    private String fecha;
+    @Column(name = "fecha")
+    private Date fecha;
 
     private String duracion;
     private String nivel;
-    private Double precio;
+    private BigDecimal precio;
     private String imagen;
 
+    @Column(name = "categoria_id")
+    private Long categoriaId;
 
-    @ManyToOne
-    @JoinColumn(name = "categoria_id")
-    private Categoria categoria;
+    @Column(name = "profesor_nombre")
+    private String profesorNombre;
 
+    @Column(columnDefinition = "json")
+    private String temario;
 
-    private String profesor_nombre;
+    @Column(columnDefinition = "json")
+    private String aprendizajes;
 
-
-    @Column(columnDefinition = "JSON")
-    private String temario; 
-
-    @Column(columnDefinition = "JSON")
-    private String aprendizajes;  
-
-    @Column(columnDefinition = "JSON")
-    private String publico;  
+    @Column(columnDefinition = "json")
+    private String publico;
 }
 

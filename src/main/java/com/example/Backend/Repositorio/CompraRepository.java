@@ -12,4 +12,5 @@ import java.util.List;
 public interface CompraRepository extends JpaRepository<Compra, Long> {
     List<Compra> findByUsuario(Usuario usuario);
     boolean existsByUsuarioAndCurso(Usuario usuario, Curso curso);
+    List<Compra> findAllByOrderByFechaCompraDesc();
 }

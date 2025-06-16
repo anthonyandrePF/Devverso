@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil Admin- Devverso</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/log.css}" />
+    <link rel="icon" type="image/png" th:href="@{/img/programacion.png}" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <!-- Agregar sidebar con altura completa -->
+  <div class="d-flex min-vh-100">
+    <nav id="sidebar" class="bg-dark text-white p-3" style="width: 250px; min-height: 100vh; position: fixed;">
+      <h4>Administración</h4>
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#" onclick="showSection('sectionCursos'); return false;">
+            <i class="bi bi-book"></i> Cursos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#" onclick="showSection('sectionVentas'); return false;">
+            <i class="bi bi-cart"></i> Historial de Ventas
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- Contenido principal con margen izquierdo -->
+    <div class="flex-grow-1 p-4" style="margin-left: 250px;">
+      <nav class="navbar navbar-expand-lg bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/}">
+                <img th:src="@{/img/LOGO.png}" alt="logo" class="logo w-auto ms-3" />
+            </a>
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" th:href="@{/}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" th:href="@{/cursos}">Cursos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" th:href="@{/nosotros}">Nosotros</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person"></i>
+                        <span id="usernameDisplay">Iniciar sesión</span>
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-end bg-dark text-white" aria-labelledby="userDropdown" style="min-width: 220px;">
+                        <li class="px-3 py-2">
+                          <div class="fw-bold" id="dropdownUserName">Ver Perfil</div>
+                          <div class="small text-secondary" id="dropdownUserEmail"></div>
+                        </li>
+                        <li><hr class="dropdown-divider bg-secondary"></li>
+                        <li><a class="dropdown-item text-white" href="/perfil"><i class="bi bi-person"></i> Tu perfil</a></li>
+                        <li><a class="dropdown-item text-white" th:href="@{/mis-cursos}"><i class="bi bi-journal-bookmark"></i> Tus cursos</a></li>
+                        <li><hr class="dropdown-divider bg-secondary"></li>
+                        <li>
+                          <form method="post" action="/logout" class="d-inline">
+                            <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
+                          </form>
+                        </li>
+                      </ul>
+                    </li>
+                    <!-- Carrito -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#" data-bs-toggle="offcanvas" data-bs-target="#carrito">
+                            <i class="bi bi-cart"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="sectionCursos">
+      <div class="d-flex justify-content-between align-items-center ">
+        <h2 >Cursos</h2>
+        <!-- Se actualiza la clase del botón para que sea más grande -->
+        <a th:href="@{/admin/cursos/agregar}" class="btn btn-lg btn-success">Agregar curso</a>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-3 mb-3" th:each="curso : ${cursos}">
+          <div class="card h-100">
+            <img th:src="${curso.imagen}" class="card-img-top" th:alt="${curso.nombre}" />
+            <div class="card-body">
+              <h5 class="card-title" th:text="${curso.nombre}">Nombre Curso</h5>
+              <p class="card-text" th:text="${curso.descripcion}">Descripción</p>
+            </div>
+            <div class="card-footer">
+              <a th:href="@{'/admin/cursos/edit/' + ${curso.id}}" class="btn btn-sm btn-warning">Editar</a>
+              <a th:href="@{'/admin/cursos/delete/' + ${curso.id}}" class="btn btn-sm btn-danger">Eliminar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="sectionVentas" style="display: none;">
+      <h2>Historial de Ventas</h2>
+      <div class="table-responsive">
+        <table class="table table-dark table-striped">
+          <thead>
+            <tr>
+              <th>ID Venta</th>
+              <th>Curso</th>
+              <th>Estudiante</th>
+              <th>Fecha de compra</th>
+              <th>Monto del curso</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="venta : ${ventas}">
+              <td th:text="${venta.id}">1</td>
+              <td th:text="${venta.curso.nombre}">Curso X</td>
+              <td th:text="${venta.usuario.nombre}">Estudiante</td>
+              <td th:text="${#temporals.format(venta.fechaCompra, 'dd-MM-yyyy')}">2023-10-10</td>
+              <td th:text="${'S/ ' + #numbers.formatDecimal(venta.curso.precio, 1, 2)}">100.00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script th:src="@{/js/detalle-curso.js}"></script>
+  <script th:src="@{/js/log.js}"></script>
+  <script th:src="@{/js/navbar.js}"></script>
+  <script>
+    function showSection(sectionId) {
+      document.getElementById('sectionCursos').style.display = sectionId === 'sectionCursos' ? 'block' : 'none';
+      document.getElementById('sectionVentas').style.display = sectionId === 'sectionVentas' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

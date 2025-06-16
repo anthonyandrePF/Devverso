@@ -136,7 +136,58 @@
 </head>
 <body class="bg-dark text-white">
 
-<nav th:replace="~{navbar :: navbar}"></nav>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-dark fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">
+            <img th:src="@{/img/LOGO.png}" alt="logo" class="logo w-auto ms-3" />
+        </a>
+        <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{/}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{/cursos}">Cursos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{/nosotros}">Nosotros</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person"></i>
+                    <span id="usernameDisplay">Iniciar sesión</span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end bg-dark text-white" aria-labelledby="userDropdown" style="min-width: 220px;">
+                    <li class="px-3 py-2">
+                      <div class="fw-bold" id="dropdownUserName">Ver Perfil</div>
+                      <div class="small text-secondary" id="dropdownUserEmail"></div>
+                    </li>
+                    <li><hr class="dropdown-divider bg-secondary"></li>
+                    <li><a class="dropdown-item text-white" href="/perfil"><i class="bi bi-person"></i> Tu perfil</a>
+                    </li>
+                    <li><a class="dropdown-item text-white" th:href="@{/mis-cursos}"><i class="bi bi-journal-bookmark"></i> Tus cursos</a></li>
+                    <li><hr class="dropdown-divider bg-secondary"></li>
+                    <li>
+                      <form method="post" action="/logout" class="d-inline">
+                        <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
+                      </form>
+                    </li>
+                  </ul>
+                </li>
+                <!-- Carrito -->
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#" data-bs-toggle="offcanvas" data-bs-target="#carrito">
+                        <i class="bi bi-cart"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
 <div class="perfil-layout">
   <!-- Sidebar -->
@@ -181,8 +232,8 @@
       <div th:if="${compras != null and !compras.isEmpty()}">
         <div class="row">
           <div class="col-md-4 mb-3" th:each="compra : ${compras}" th:if="${compra.curso != null}">
-            <div class="card bg-dark text-white h-100">
-              <img th:src="@{${compra.curso.imagen}}" class="card-img-top" alt="Imagen del curso" style="height: 180px; object-fit: cover;">
+            <div class="card bg-dark text-white ">
+              <img th:src="${compra.curso.imagen}" class="card-img-top img-fluid" alt="Imagen del curso" >
               <div class="card-body">
                 <h5 class="card-title" th:text="${compra.curso.nombre}">Nombre del curso</h5>
                 <p class="card-text" th:text="${compra.curso.descripcion}">Descripción del curso</p>

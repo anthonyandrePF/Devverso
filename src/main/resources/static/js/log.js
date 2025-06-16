@@ -1,39 +1,32 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const userDropdown = document.getElementById("userDropdown");
-  const loginTrigger = document.getElementById("loginTrigger");
+  const usernameDisplay = document.getElementById("usernameDisplay");
 
-  if (loginTrigger) {
-    loginTrigger.addEventListener("click", async (e) => {
-      e.preventDefault();
-      try {
-        const response = await fetch("/api/usuario/autenticado");
-        const data = await response.json();
-        if (data.autenticado) {
-          document.getElementById("usernameDisplay").textContent = data.usuario;
-          mostrarModalPerfil(data.usuario);
-        } else {
-          document.getElementById("usernameDisplay").textContent = "Iniciar sesión";
-          mostrarModalLogin();
-        }
-      } catch {
+  if (!userDropdown) return;
+
+  try {
+    const response = await fetch("/api/usuario/autenticado");
+    const data = await response.json();
+
+    if (data.autenticado) {
+      usernameDisplay.textContent = data.usuario;
+      // Si está autenticado se activa el dropdown de perfil
+      userDropdown.setAttribute("data-bs-toggle", "dropdown");
+    } else {
+      usernameDisplay.textContent = "Iniciar sesión";
+      // Si no está autenticado se remueve el dropdown y se asigna el evento para abrir el modal de login
+      userDropdown.removeAttribute("data-bs-toggle");
+      userDropdown.addEventListener("click", e => {
+        e.preventDefault();
         mostrarModalLogin();
-      }
-    });
-  }
-
-  if (userDropdown) {
-    userDropdown.addEventListener("click", async (e) => {
+      });
+    }
+  } catch (err) {
+    usernameDisplay.textContent = "Iniciar sesión";
+    userDropdown.removeAttribute("data-bs-toggle");
+    userDropdown.addEventListener("click", e => {
       e.preventDefault();
-      const response = await fetch("/api/usuario/autenticado");
-      const data = await response.json();
-
-      if (data.autenticado) {
-        document.getElementById("usernameDisplay").textContent = data.usuario;
-        mostrarModalPerfil(data.usuario);
-      } else {
-        document.getElementById("usernameDisplay").textContent = "Iniciar sesión";
-        mostrarModalLogin();
-      }
+      mostrarModalLogin();
     });
   }
 
@@ -44,10 +37,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const emailExists = urlParams.has("emailExists");
   const loginError = urlParams.has("loginError");
 
-  // NUEVO: Detecta si estás en /perfil
   const isPerfilPage = window.location.pathname.startsWith("/perfil");
 
-  // Solo mostrar modales automáticos si NO estás en /perfil
   if (!isPerfilPage) {
     if (loginSuccess) {
       try {
@@ -55,14 +46,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const data = await res.json();
         const nombre = data.usuario || "usuario";
         Swal.fire("Bienvenido", `¡Hola, ${nombre}!`, "success");
-        // NO mostrar modal de login aquí, aunque el parámetro esté en la URL
       } catch (err) {
         Swal.fire("Bienvenido", "¡Hola, usuario!", "success");
-        // NO mostrar modal de login aquí tampoco
       }
     } else if (logoutSuccess) {
       Swal.fire("Sesión cerrada", "Has cerrado sesión con éxito", "info").then(async () => {
-        // Solo mostrar modal login si el usuario NO está autenticado
         try {
           const res = await fetch("/api/usuario/autenticado");
           const data = await res.json();
@@ -82,7 +70,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         mostrarModalRegister();
       });
     } else if (loginError) {
-      // Solo mostrar modal login si el usuario NO está autenticado
       Swal.fire("Error", "Correo o contraseña incorrectos", "error").then(async () => {
         try {
           const res = await fetch("/api/usuario/autenticado");
@@ -97,41 +84,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  if (
-    loginSuccess || logoutSuccess ||
-    registerSuccess || emailExists || loginError
-  ) {
+  if (loginSuccess || logoutSuccess || registerSuccess || emailExists || loginError) {
     const cleanUrl = window.location.origin + window.location.pathname;
     window.history.replaceState({}, document.title, cleanUrl);
   }
-
-  // NUEVO: Actualiza el nombre en el navbar al cargar la página
-  try {
-    const res = await fetch("/api/usuario/autenticado");
-    const data = await res.json();
-    const usernameDisplay = document.getElementById("usernameDisplay");
-    if (usernameDisplay) {
-      if (data.autenticado) {
-        usernameDisplay.textContent = data.usuario;
-      } else {
-        usernameDisplay.textContent = "Iniciar sesión";
-      }
-    }
-  } catch (e) {
-    // En caso de error, muestra "Iniciar sesión"
-    const usernameDisplay = document.getElementById("usernameDisplay");
-    if (usernameDisplay) usernameDisplay.textContent = "Iniciar sesión";
-  }
 });
-
-document.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get("loginRequired")) {
-    mostrarModalLogin();
-  }
-});
-
-  //  Limpiar parámetros de la URL sin recargar
 
 function mostrarModalLogin() {
   const modalHTML = `
@@ -165,16 +122,14 @@ function mostrarModalLogin() {
   `;
 
   document.getElementById("loginModal")?.remove();
-
   const wrapper = document.createElement("div");
   wrapper.innerHTML = modalHTML;
   document.body.appendChild(wrapper.firstElementChild);
-
   const modal = new bootstrap.Modal(document.getElementById("loginModal"));
   modal.show();
 
   setTimeout(() => {
-    document.getElementById("switchToRegister")?.addEventListener("click", (e) => {
+    document.getElementById("switchToRegister")?.addEventListener("click", e => {
       e.preventDefault();
       modal.hide();
       mostrarModalRegister();
@@ -223,22 +178,19 @@ function mostrarModalRegister() {
   `;
 
   document.getElementById("registerModal")?.remove();
-
   const wrapper = document.createElement("div");
   wrapper.innerHTML = modalHTML;
   document.body.appendChild(wrapper.firstElementChild);
-
   const modal = new bootstrap.Modal(document.getElementById("registerModal"));
   modal.show();
 
   setTimeout(() => {
-    document.getElementById("switchToLogin")?.addEventListener("click", (e) => {
+    document.getElementById("switchToLogin")?.addEventListener("click", e => {
       e.preventDefault();
       modal.hide();
       mostrarModalLogin();
     });
 
-    // Validación de contraseñas
     const form = document.getElementById("registerForm");
     form.addEventListener("submit", function (e) {
       const pass1 = document.getElementById("password").value;

@@ -20,4 +20,12 @@ public class CursoService {
     public Curso findById(Long id) {
         return cursoRepository.findById(id).orElse(null);
     }
+
+    public void save(Curso curso) {
+        cursoRepository.save(curso);
+    }
+
+    public void deleteById(Long id) {
+        cursoRepository.deleteById(id);
+    }
 }

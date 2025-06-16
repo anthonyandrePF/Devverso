@@ -31,15 +31,18 @@ public class UsuarioController {
     public String login(@RequestParam String email,
                         @RequestParam String password,
                         HttpSession session,
-                        @RequestHeader("Referer") String referer) {
-
+                        @RequestHeader(value="Referer", required=false) String referer) {
         Optional<Usuario> userOpt = userService.authenticate(email, password);
-        if (userOpt.isPresent()) {
-            session.setAttribute("usuarioActual", email); // <-- Guarda el EMAIL
-            return "redirect:" + buildRedirectUrl(referer, "loginSuccess");
-        } else {
-            return "redirect:" + buildRedirectUrl(referer, "loginError");
+        if(userOpt.isPresent()){
+            Usuario usuario = userOpt.get();
+            session.setAttribute("usuarioActual", email);
+            if("ROLE_ADMIN".equals(usuario.getRole())){
+                return "redirect:/perfil-admin?loginSuccess=true";
+            } else if("ROLE_ESTUDIANTE".equals(usuario.getRole())){
+                return "redirect:/?loginSuccess=true";
+            }
         }
+        return "redirect:" + (referer != null ? buildRedirectUrl(referer, "loginError") : "/?loginError=true");
     }
 
     @PostMapping("/register")
@@ -70,31 +73,26 @@ public class UsuarioController {
     }
 
     @RestController
-    public class SesionController {
-
+    public static class SesionController {
         @Autowired
         private UsuarioRepository usuarioRepository;
-
+ 
         @GetMapping("/api/usuario/autenticado")
         public ResponseEntity<Map<String, Object>> verificarSesion(HttpSession session) {
             Map<String, Object> response = new HashMap<>();
             Object email = session.getAttribute("usuarioActual");
-
-            if (email != null) {
+            if(email != null) {
                 response.put("autenticado", true);
-                // Buscar el nombre real del usuario
                 Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email.toString());
-                if (usuarioOpt.isPresent()) {
-                    response.put("usuario", usuarioOpt.get().getNombre());
-                    response.put("email", usuarioOpt.get().getEmail());
-                } else {
-                    response.put("usuario", email); // fallback
-                    response.put("email", email);
+                if(usuarioOpt.isPresent()){
+                    Usuario usuario = usuarioOpt.get();
+                    response.put("usuario", usuario.getNombre());
+                    response.put("email", usuario.getEmail());
+                    response.put("rol", usuario.getRole());
                 }
             } else {
                 response.put("autenticado", false);
             }
-
             return ResponseEntity.ok(response);
         }
     }

@@ -173,4 +173,39 @@ public class WebController {
         session.invalidate();
         return "redirect:/";
     }
+
+    @GetMapping("/mis-cursos")
+    public String mostrarMisCursos(Model model, HttpSession session) {
+        String email = (String) session.getAttribute("usuarioActual");
+        if (email == null) {
+             return "redirect:/";
+        }
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+        if (usuarioOpt.isEmpty()) {
+             return "redirect:/";
+        }
+        Usuario usuario = usuarioOpt.get();
+        List<Compra> compras = compraRepository.findByUsuario(usuario);
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("compras", compras);
+        return "mis-cursos";
+    }
+
+    public String mostrarPerfilAdmin(Model model, HttpSession session) {
+        String email = (String) session.getAttribute("usuarioActual");
+        if (email == null) {
+            return "redirect:/?loginRequired=true";
+        }
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+        if (usuarioOpt.isEmpty()) {
+            return "redirect:/";
+        }
+        Usuario usuario = usuarioOpt.get();
+        if (!"ROLE_ADMIN".equals(usuario.getRole())) {
+            return "redirect:/perfil?accessDenied=true";
+        }
+        // ...posibles datos adicionales para el administrador...
+        model.addAttribute("usuario", usuario);
+        return "perfil-admin"; // Se espera que exista la vista perfil-admin.html
+    }
 }

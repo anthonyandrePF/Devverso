@@ -17,7 +17,9 @@ public class Usuario {
     private String nombre;
     private String email;
     private String password;
+    
+    @Column(name = "role")
     @Builder.Default
-    private String role = "ROLE_ESTUDIANTE";
+    private String role = "ROLE_ESTUDIANTE"; 
 }
 
