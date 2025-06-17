@@ -2,8 +2,10 @@ package com.example.Backend.Controlador;
 
 import com.example.Backend.Entidad.Curso;
 import com.example.Backend.Entidad.Usuario;
+import com.example.Backend.Entidad.Categoria;
 import com.example.Backend.Servicio.CursoService;
 import com.example.Backend.Servicio.UsuarioService;
+import com.example.Backend.Repositorio.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +28,9 @@ public class AdminCursoController {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+
     // Mostrar formulario para agregar un curso
     @GetMapping("/agregar")
 public String mostrarFormularioAgregar(Model model, HttpSession session) {
@@ -43,6 +48,7 @@ public String mostrarFormularioAgregar(Model model, HttpSession session) {
     nuevoCurso.setPublico("[]");
 
     model.addAttribute("curso", nuevoCurso);
+    model.addAttribute("categorias", categoriaRepository.findAll()); // Agregar categorías al modelo
     return "admin/formulario-curso";
 }
 
@@ -73,6 +79,13 @@ public String guardarCurso(@ModelAttribute Curso curso,
         }
     }
 
+    Optional<Categoria> categoriaOpt = categoriaRepository.findById(curso.getCategoria().getId());
+    if (categoriaOpt.isPresent()) {
+        curso.setCategoria(categoriaOpt.get());
+    } else {
+        System.out.println("Categoría no encontrada con ID: " + curso.getCategoria().getId());
+        return "redirect:/perfil-admin";
+    }
     cursoService.save(curso);
     return "redirect:/perfil-admin";
 }
@@ -82,7 +95,12 @@ public String guardarCurso(@ModelAttribute Curso curso,
     @GetMapping("/edit/{id}")
     public String mostrarFormularioEditar(@PathVariable Long id, Model model) {
         Curso curso = cursoService.findById(id);
+        if (curso == null) {
+            return "redirect:/perfil-admin";
+        }
+
         model.addAttribute("curso", curso);
+        model.addAttribute("categorias", categoriaRepository.findAll()); // Agregar categorías al modelo
         return "admin/formulario-curso"; // misma vista para agregar y editar
     }
 
@@ -141,6 +159,23 @@ public String guardarCurso(@ModelAttribute Curso curso,
         cursoService.deleteById(id);
         return "redirect:/perfil-admin";
     }
+
+    // Mostrar detalles del curso
+    @GetMapping("/detalle/{id}")
+public String mostrarDetalleCurso(@PathVariable Long id, Model model) {
+    Curso curso = cursoService.findById(id);
+    if (curso == null) {
+        return "redirect:/cursos";
+    }
+
+    // Obtener el nombre de la categoría
+    Optional<Categoria> categoriaOpt = categoriaRepository.findById(curso.getCategoria().getId());
+    String nombreCategoria = categoriaOpt.map(Categoria::getNombre).orElse("Categoría no encontrada");
+
+    model.addAttribute("curso", curso);
+    model.addAttribute("nombreCategoria", nombreCategoria);
+    return "detalle-curso";
+}
 
     
 }

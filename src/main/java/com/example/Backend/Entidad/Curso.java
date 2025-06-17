@@ -31,8 +31,9 @@ public class Curso {
     private BigDecimal precio;
     private String imagen;
 
-    @Column(name = "categoria_id")
-    private Long categoriaId;
+    @ManyToOne
+    @JoinColumn(name = "categoria_id", nullable = false)
+    private Categoria categoria;
 
     @Column(name = "profesor_nombre")
     private String profesorNombre;

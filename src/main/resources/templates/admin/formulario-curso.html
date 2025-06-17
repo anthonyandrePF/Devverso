@@ -112,10 +112,8 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Categoría</label>
-                                <select th:field="*{categoriaId}" class="form-select" required>
-                                    <option value="1">Backend</option>
-                                    <option value="2">Frontend</option>
-                                    <option value="3">Base de datos</option>
+                                <select th:field="*{categoria.id}" class="form-select" required>
+                                    <option th:each="categoria : ${categorias}" th:value="${categoria.id}" th:text="${categoria.nombre}">Categoría</option>
                                 </select>
                             </div>
                         </div>
@@ -217,10 +215,8 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Categoría</label>
-                                <select th:field="*{categoriaId}" class="form-select" required>
-                                    <option value="1">Backend</option>
-                                    <option value="2">Frontend</option>
-                                    <option value="3">Base de datos</option>
+                                <select th:field="*{categoria.id}" class="form-select" required>
+                                    <option th:each="categoria : ${categorias}" th:value="${categoria.id}" th:text="${categoria.nombre}">Categoría</option>
                                 </select>
                             </div>
                         </div>
