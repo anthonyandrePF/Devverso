@@ -221,14 +221,13 @@
                                 </select>
                             </div>
                         </div>
-
-                        <div class="mb-3">
+                           <div class="mb-3">
                             <label class="form-label">Imagen del curso</label>
                             <input type="file" accept="image/*" class="form-control" name="imagenFile" />
                             <div class="form-text">Formatos permitidos: JPG, PNG (máx. 5MB)</div>
-                            <div th:if="${curso.imagen}">
-                                <img th:src="@{${curso.imagen}}" alt="Imagen actual" class="img-thumbnail mt-2" style="max-width: 200px;">
-                                <div class="small text-muted">Imagen actual</div>
+                            <div th:if="${curso.imagen != null and !curso.imagen.isEmpty()}" class="mt-2">
+                                <img th:src="@{${curso.imagen}}" alt="Imagen actual" class="img-thumbnail" style="max-width: 200px;">
+                                <div class="small text-muted">Imagen actual: <span th:text="${curso.imagen}"></span></div>
                             </div>
                         </div>
 

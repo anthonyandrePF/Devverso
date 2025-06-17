@@ -22,7 +22,9 @@ public class CursoService {
     }
 
     public void save(Curso curso) {
+        System.out.println("Guardando curso: " + curso);
         cursoRepository.save(curso);
+       
     }
 
     public void deleteById(Long id) {

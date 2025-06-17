@@ -72,18 +72,49 @@ public class AdminCursoController {
     // Actualizar un curso editado
     @PostMapping("/update")
     public String actualizarCurso(@ModelAttribute Curso curso, @RequestParam(value = "imagenFile", required = false) MultipartFile imagenFile) {
+        Curso cursoExistente = cursoService.findById(curso.getId());
+        if (cursoExistente == null) {
+            System.out.println("Curso no encontrado con ID: " + curso.getId());
+            return "redirect:/perfil-admin";
+        }
+
+        // Mantener la imagen existente si no se sube una nueva
+        String imagenAnterior = cursoExistente.getImagen();
+        curso.setImagen(imagenAnterior);
+
         if (imagenFile != null && !imagenFile.isEmpty()) {
             String nombreArchivo = StringUtils.cleanPath(imagenFile.getOriginalFilename());
-            String rutaDestino = "src/main/resources/static/img/" + nombreArchivo;
+            // Usar una ruta absoluta para guardar las imágenes
+            String rutaDestino = "C:/Devverso/static/img/" + nombreArchivo;
+
             try {
-                imagenFile.transferTo(new File(rutaDestino));
-                curso.setImagen("/img/" + nombreArchivo);
+                File archivoDestino = new File(rutaDestino);
+
+                // Crear el directorio si no existe
+                File directorio = archivoDestino.getParentFile();
+                if (!directorio.exists()) {
+                    directorio.mkdirs();
+                }
+
+                imagenFile.transferTo(archivoDestino);
+
+                if (archivoDestino.exists()) {
+                    // Actualizar la ruta en el objeto curso
+                    curso.setImagen("/img/" + nombreArchivo);
+                    System.out.println("Nueva imagen guardada: " + curso.getImagen());
+                } else {
+                    System.out.println("Error: No se pudo guardar la imagen");
+                    curso.setImagen(imagenAnterior); // Reestablecer la imagen anterior
+                }
             } catch (IOException e) {
-                
+                System.out.println("Error al guardar la imagen: " + e.getMessage());
+                curso.setImagen(imagenAnterior); // Reestablecer la imagen anterior
             }
         }
-        // Si no se sube imagen, el valor de curso.getImagen() viene del campo oculto del formulario (ya no es null)
+
+        System.out.println("Curso antes de guardar: " + curso);
         cursoService.save(curso);
+        System.out.println("Curso actualizado: " + curso);
         return "redirect:/perfil-admin";
     }
 
