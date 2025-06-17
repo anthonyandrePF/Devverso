@@ -55,16 +55,18 @@
 
                     <!-- Formulario AGREGAR -->
                     <form th:action="@{/admin/cursos/guardar}" 
-                          th:object="${curso}" 
-                          method="post"
-                          enctype="multipart/form-data"
-                          id="cursoForm"
-                          th:if="${curso.id} == null">
-                        
+                        th:object="${curso}" 
+                        method="post"
+                        enctype="multipart/form-data"
+                        id="cursoForm"
+                        th:if="${curso.id} == null">
+
+                        <!-- ID oculto solo si existe -->
                         <div th:if="${curso.id} != null">
                             <input type="hidden" th:field="*{id}" />
                         </div>
 
+                        <!-- Campos básicos -->
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Nombre del curso</label>
@@ -155,6 +157,7 @@
                             </button>
                         </div>
                     </form>
+
 
                     <!-- Formulario EDITAR -->
                     <form th:action="@{/admin/cursos/update}" 
@@ -268,133 +271,139 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script>
-        // --- Temario dinámico ---
-        function addTemario(tipo, titulo = '', descripcion = '', contenido = []) {
-            const listId = tipo === 'edit' ? 'temario-list-edit' : 'temario-list-add';
-            const temarioDiv = document.createElement('div');
-            temarioDiv.className = 'temario-item border rounded p-2 mb-2';
-            temarioDiv.innerHTML = `
-                <input type="text" class="form-control mb-1" placeholder="Título del tema" value="${titulo}" data-tipo="titulo">
-                <input type="text" class="form-control mb-1" placeholder="Descripción" value="${descripcion}" data-tipo="descripcion">
-                <div class="contenido-list mb-1"></div>
-                <button type="button" class="btn btn-outline-secondary btn-sm mb-1" onclick="addContenido(this)">Agregar contenido</button>
-                <button type="button" class="btn btn-danger btn-sm mb-1" onclick="this.parentElement.remove()">Eliminar tema</button>
-            `;
-            document.getElementById(listId).appendChild(temarioDiv);
-            // Si hay contenido, cargarlo
-            if (contenido && Array.isArray(contenido)) {
-                contenido.forEach(c => addContenido(temarioDiv.querySelector('.btn-outline-secondary'), c.titulo, c.duracion));
-            }
-        }
-        function addContenido(btn, titulo = '', duracion = '') {
-            const contList = btn.parentElement.querySelector('.contenido-list');
-            const contDiv = document.createElement('div');
-            contDiv.className = 'contenido-item input-group mb-1';
-            contDiv.innerHTML = `
-                <input type="text" class="form-control" placeholder="Título contenido" value="${titulo}" data-tipo="titulo">
-                <input type="text" class="form-control" placeholder="Duración (ej: 10:00)" value="${duracion}" data-tipo="duracion">
-                <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">X</button>
-            `;
-            contList.appendChild(contDiv);
-        }
+    // --- Temario dinámico ---
+    function addTemario(tipo, titulo = '', descripcion = '', contenido = []) {
+        const listId = tipo === 'edit' ? 'temario-list-edit' : 'temario-list-add';
+        const temarioDiv = document.createElement('div');
+        temarioDiv.className = 'temario-item border rounded p-2 mb-2';
+        temarioDiv.innerHTML = `
+            <input type="text" class="form-control mb-1" placeholder="Título del tema" value="${titulo}" data-tipo="titulo">
+            <input type="text" class="form-control mb-1" placeholder="Descripción" value="${descripcion}" data-tipo="descripcion">
+            <div class="contenido-list mb-1"></div>
+            <button type="button" class="btn btn-outline-secondary btn-sm mb-1" onclick="addContenido(this)">Agregar contenido</button>
+            <button type="button" class="btn btn-danger btn-sm mb-1" onclick="this.parentElement.remove()">Eliminar tema</button>
+        `;
+        document.getElementById(listId).appendChild(temarioDiv);
 
-        // --- Aprendizajes dinámicos ---
-        function addAprendizaje(tipo, valor = '') {
-            const listId = tipo === 'edit' ? 'aprendizajes-list-edit' : 'aprendizajes-list-add';
-            const div = document.createElement('div');
-            div.className = 'aprendizaje-item input-group mb-1';
-            div.innerHTML = `
-                <input type="text" class="form-control" placeholder="Aprendizaje" value="${valor}">
-                <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">X</button>
-            `;
-            document.getElementById(listId).appendChild(div);
+        if (contenido && Array.isArray(contenido)) {
+            contenido.forEach(c => addContenido(temarioDiv.querySelector('.btn-outline-secondary'), c.titulo, c.duracion));
         }
+    }
 
-        // --- Público objetivo dinámico ---
-        function addPublico(tipo, valor = '') {
-            const listId = tipo === 'edit' ? 'publico-list-edit' : 'publico-list-add';
-            const div = document.createElement('div');
-            div.className = 'publico-item input-group mb-1';
-            div.innerHTML = `
-                <input type="text" class="form-control" placeholder="Público objetivo" value="${valor}">
-                <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">X</button>
-            `;
-            document.getElementById(listId).appendChild(div);
-        }
+    function addContenido(btn, titulo = '', duracion = '') {
+        const contList = btn.parentElement.querySelector('.contenido-list');
+        const contDiv = document.createElement('div');
+        contDiv.className = 'contenido-item input-group mb-1';
+        contDiv.innerHTML = `
+            <input type="text" class="form-control" placeholder="Título contenido" value="${titulo}" data-tipo="titulo">
+            <input type="text" class="form-control" placeholder="Duración (ej: 10:00)" value="${duracion}" data-tipo="duracion">
+            <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">X</button>
+        `;
+        contList.appendChild(contDiv);
+    }
 
-        // --- Al enviar el formulario, convertir a JSON ---
-        function handleFormSubmit(tipo) {
-            const prefix = tipo === 'edit' ? 'edit' : 'add';
-            // Temario
-            const temarioArr = [];
-            document.querySelectorAll(`#temario-list-${prefix} .temario-item`).forEach(item => {
-                const titulo = item.querySelector('input[data-tipo="titulo"]').value;
-                const descripcion = item.querySelector('input[data-tipo="descripcion"]').value;
-                const contenidoArr = [];
-                item.querySelectorAll('.contenido-item').forEach(cont => {
-                    contenidoArr.push({
-                        titulo: cont.querySelector('input[data-tipo="titulo"]').value,
-                        duracion: cont.querySelector('input[data-tipo="duracion"]').value
-                    });
+    // --- Aprendizajes dinámicos ---
+    function addAprendizaje(tipo, valor = '') {
+        const listId = tipo === 'edit' ? 'aprendizajes-list-edit' : 'aprendizajes-list-add';
+        const div = document.createElement('div');
+        div.className = 'aprendizaje-item input-group mb-1';
+        div.innerHTML = `
+            <input type="text" class="form-control" placeholder="Aprendizaje" value="${valor}">
+            <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">X</button>
+        `;
+        document.getElementById(listId).appendChild(div);
+    }
+
+    // --- Público objetivo dinámico ---
+    function addPublico(tipo, valor = '') {
+        const listId = tipo === 'edit' ? 'publico-list-edit' : 'publico-list-add';
+        const div = document.createElement('div');
+        div.className = 'publico-item input-group mb-1';
+        div.innerHTML = `
+            <input type="text" class="form-control" placeholder="Público objetivo" value="${valor}">
+            <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">X</button>
+        `;
+        document.getElementById(listId).appendChild(div);
+    }
+
+    // --- Al enviar el formulario, convertir a JSON ---
+    function handleFormSubmit(tipo) {
+        const prefix = tipo === 'edit' ? 'edit' : 'add';
+
+        // Temario
+        const temarioArr = [];
+        document.querySelectorAll(`#temario-list-${prefix} .temario-item`).forEach(item => {
+            const titulo = item.querySelector('input[data-tipo="titulo"]').value;
+            const descripcion = item.querySelector('input[data-tipo="descripcion"]').value;
+            const contenidoArr = [];
+            item.querySelectorAll('.contenido-item').forEach(cont => {
+                contenidoArr.push({
+                    titulo: cont.querySelector('input[data-tipo="titulo"]').value,
+                    duracion: cont.querySelector('input[data-tipo="duracion"]').value
                 });
-                temarioArr.push({titulo, descripcion, contenido: contenidoArr});
             });
-            document.getElementById(`temario-json-${prefix}`).value = JSON.stringify(temarioArr);
-
-            // Aprendizajes
-            const aprendizajesArr = [];
-            document.querySelectorAll(`#aprendizajes-list-${prefix} .aprendizaje-item input`).forEach(inp => {
-                if (inp.value.trim()) aprendizajesArr.push(inp.value.trim());
-            });
-            document.getElementById(`aprendizajes-json-${prefix}`).value = JSON.stringify(aprendizajesArr);
-
-            // Público objetivo
-            const publicoArr = [];
-            document.querySelectorAll(`#publico-list-${prefix} .publico-item input`).forEach(inp => {
-                if (inp.value.trim()) publicoArr.push(inp.value.trim());
-            });
-            document.getElementById(`publico-json-${prefix}`).value = JSON.stringify(publicoArr);
-        }
-
-        // --- Si se está editando o agregando, cargar datos existentes ---
-        window.addEventListener('DOMContentLoaded', () => {
-            // Para agregar
-            if (document.getElementById('cursoForm')) {
-                try {
-                    const temario = JSON.parse(document.getElementById('temario-json-add').value || '[]');
-                    temario.forEach(t => addTemario('add', t.titulo, t.descripcion, t.contenido));
-                } catch {}
-                try {
-                    const aprendizajes = JSON.parse(document.getElementById('aprendizajes-json-add').value || '[]');
-                    aprendizajes.forEach(a => addAprendizaje('add', a));
-                } catch {}
-                try {
-                    const publico = JSON.parse(document.getElementById('publico-json-add').value || '[]');
-                    publico.forEach(p => addPublico('add', p));
-                } catch {}
-                document.getElementById('cursoForm').addEventListener('submit', function(e) {
-                    handleFormSubmit('add');
-                });
-            }
-            // Para editar
-            if (document.getElementById('cursoFormEdit')) {
-                try {
-                    const temario = JSON.parse(document.getElementById('temario-json-edit').value || '[]');
-                    temario.forEach(t => addTemario('edit', t.titulo, t.descripcion, t.contenido));
-                } catch {}
-                try {
-                    const aprendizajes = JSON.parse(document.getElementById('aprendizajes-json-edit').value || '[]');
-                    aprendizajes.forEach(a => addAprendizaje('edit', a));
-                } catch {}
-                try {
-                    const publico = JSON.parse(document.getElementById('publico-json-edit').value || '[]');
-                    publico.forEach(p => addPublico('edit', p));
-                } catch {}
-                document.getElementById('cursoFormEdit').addEventListener('submit', function(e) {
-                    handleFormSubmit('edit');
-                });
-            }
+            temarioArr.push({ titulo, descripcion, contenido: contenidoArr });
         });
-    </script>
+        document.getElementById(`temario-json-${prefix}`).value = JSON.stringify(temarioArr);
+
+        // Aprendizajes
+        const aprendizajesArr = [];
+        document.querySelectorAll(`#aprendizajes-list-${prefix} .aprendizaje-item input`).forEach(inp => {
+            if (inp.value.trim()) aprendizajesArr.push(inp.value.trim());
+        });
+        document.getElementById(`aprendizajes-json-${prefix}`).value = JSON.stringify(aprendizajesArr);
+
+        // Público objetivo
+        const publicoArr = [];
+        document.querySelectorAll(`#publico-list-${prefix} .publico-item input`).forEach(inp => {
+            if (inp.value.trim()) publicoArr.push(inp.value.trim());
+        });
+        document.getElementById(`publico-json-${prefix}`).value = JSON.stringify(publicoArr);
+    }
+
+    // --- Cargar datos existentes y manejar envío ---
+    window.addEventListener('DOMContentLoaded', () => {
+        // Para agregar
+        if (document.getElementById('cursoForm')) {
+            try {
+                const temario = JSON.parse(document.getElementById('temario-json-add').value || '[]');
+                temario.forEach(t => addTemario('add', t.titulo, t.descripcion, t.contenido));
+            } catch {}
+            try {
+                const aprendizajes = JSON.parse(document.getElementById('aprendizajes-json-add').value || '[]');
+                aprendizajes.forEach(a => addAprendizaje('add', a));
+            } catch {}
+            try {
+                const publico = JSON.parse(document.getElementById('publico-json-add').value || '[]');
+                publico.forEach(p => addPublico('add', p));
+            } catch {}
+
+            document.getElementById('cursoForm').addEventListener('submit', function (e) {
+                handleFormSubmit('add');
+            });
+        }
+
+        // Para editar (si usas cursoFormEdit)
+        if (document.getElementById('cursoFormEdit')) {
+            try {
+                const temario = JSON.parse(document.getElementById('temario-json-edit').value || '[]');
+                temario.forEach(t => addTemario('edit', t.titulo, t.descripcion, t.contenido));
+            } catch {}
+            try {
+                const aprendizajes = JSON.parse(document.getElementById('aprendizajes-json-edit').value || '[]');
+                aprendizajes.forEach(a => addAprendizaje('edit', a));
+            } catch {}
+            try {
+                const publico = JSON.parse(document.getElementById('publico-json-edit').value || '[]');
+                publico.forEach(p => addPublico('edit', p));
+            } catch {}
+
+            document.getElementById('cursoFormEdit').addEventListener('submit', function (e) {
+                handleFormSubmit('edit');
+            });
+        }
+    });
+</script>
+
 </body>
 </html>

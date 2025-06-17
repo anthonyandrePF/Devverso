@@ -28,38 +28,55 @@ public class AdminCursoController {
 
     // Mostrar formulario para agregar un curso
     @GetMapping("/agregar")
-    public String mostrarFormularioAgregar(Model model, HttpSession session) {
-        String email = (String) session.getAttribute("usuarioActual");
-        if (email == null) {
-            return "redirect:/?loginRequired=true";
-        }
-        
-        Optional<Usuario> usuarioOpt = usuarioService.getByEmail(email);
-        if (usuarioOpt.isEmpty() || !"ROLE_ADMIN".equals(usuarioOpt.get().getRole())) {
-            return "redirect:/perfil?accessDenied=true";
-        }
-        
-        model.addAttribute("curso", new Curso());
-        return "admin/formulario-curso";
+public String mostrarFormularioAgregar(Model model, HttpSession session) {
+    String email = (String) session.getAttribute("usuarioActual");
+    if (email == null) return "redirect:/?loginRequired=true";
+
+    Optional<Usuario> usuarioOpt = usuarioService.getByEmail(email);
+    if (usuarioOpt.isEmpty() || !"ROLE_ADMIN".equals(usuarioOpt.get().getRole())) {
+        return "redirect:/perfil?accessDenied=true";
     }
+
+    Curso nuevoCurso = new Curso();
+    nuevoCurso.setTemario("[]");
+    nuevoCurso.setAprendizajes("[]");
+    nuevoCurso.setPublico("[]");
+
+    model.addAttribute("curso", nuevoCurso);
+    return "admin/formulario-curso";
+}
 
     // Guardar un curso nuevo
     @PostMapping("/guardar")
-    public String guardarCurso(@ModelAttribute Curso curso, @RequestParam(value = "imagenFile", required = false) MultipartFile imagenFile) {
-        if (imagenFile != null && !imagenFile.isEmpty()) {
-            String nombreArchivo = StringUtils.cleanPath(imagenFile.getOriginalFilename());
-            String rutaDestino = "src/main/resources/static/img/" + nombreArchivo;
-            try {
-                imagenFile.transferTo(new File(rutaDestino));
-                curso.setImagen("/img/" + nombreArchivo);
-            } catch (IOException e) {
-                // Manejo de error
+public String guardarCurso(@ModelAttribute Curso curso,
+                           @RequestParam(value = "imagenFile", required = false) MultipartFile imagenFile) {
+
+    // Inicializar campos tipo JSON si vienen vacíos
+    if (curso.getTemario() == null || curso.getTemario().isBlank()) curso.setTemario("[]");
+    if (curso.getAprendizajes() == null || curso.getAprendizajes().isBlank()) curso.setAprendizajes("[]");
+    if (curso.getPublico() == null || curso.getPublico().isBlank()) curso.setPublico("[]");
+
+    // Guardar imagen si se envió
+    if (imagenFile != null && !imagenFile.isEmpty()) {
+        String nombreArchivo = StringUtils.cleanPath(imagenFile.getOriginalFilename());
+        String rutaDestino = "C:/Devverso/static/img/" + nombreArchivo; // Ajusta según tu entorno
+        try {
+            File archivoDestino = new File(rutaDestino);
+            File directorio = archivoDestino.getParentFile();
+            if (!directorio.exists()) {
+                directorio.mkdirs();
             }
+            imagenFile.transferTo(archivoDestino);
+            curso.setImagen("/img/" + nombreArchivo);
+        } catch (IOException e) {
+            System.out.println("Error al guardar imagen: " + e.getMessage());
         }
-        // Si no se sube imagen y el campo imagen está vacío, puedes asignar una imagen por defecto si lo deseas
-        cursoService.save(curso);
-        return "redirect:/perfil-admin";
     }
+
+    cursoService.save(curso);
+    return "redirect:/perfil-admin";
+}
+
 
     // Mostrar formulario para editar un curso
     @GetMapping("/edit/{id}")
@@ -124,6 +141,8 @@ public class AdminCursoController {
         cursoService.deleteById(id);
         return "redirect:/perfil-admin";
     }
+
+    
 }
 
 
