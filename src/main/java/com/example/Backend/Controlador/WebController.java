@@ -34,16 +34,34 @@ public class WebController {
     private UsuarioRepository usuarioRepository;
 
     @GetMapping("/")
-    public String mostrarIndex(Model model) {
+    public String mostrarIndex(Model model, HttpSession session) {
         List<Curso> cursos = cursoService.findAll();  
         model.addAttribute("cursos", cursos);
+
+        // Agregar usuario al modelo si existe en sesión
+        String email = (String) session.getAttribute("usuarioActual");
+        if (email != null) {
+            Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+            if (usuarioOpt.isPresent()) {
+                model.addAttribute("usuario", usuarioOpt.get());
+            }
+        }
+
         return "index"; 
     }
 
     @GetMapping("/cursos")
-    public String mostrarCursos(Model model) {
-        List<Curso> cursos = cursoService.findAll(); 
+    public String mostrarCursos(Model model, HttpSession session) {
+        List<Curso> cursos = cursoService.findAll();
         model.addAttribute("cursos", cursos);
+        // Inyectar usuario si existe en sesión
+        String email = (String) session.getAttribute("usuarioActual");
+        if (email != null) {
+            Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+            if (usuarioOpt.isPresent()) {
+                model.addAttribute("usuario", usuarioOpt.get());
+            }
+        }
         return "cursos";
     }
 
@@ -85,6 +103,8 @@ public class WebController {
                 if (usuarioOpt.isPresent()) {
                     Usuario usuario = usuarioOpt.get();
                     haComprado = compraRepository.existsByUsuarioAndCurso(usuario, curso);
+                    // Inyectar información del usuario en el modelo
+                    model.addAttribute("usuario", usuario);
                 }
             }
             model.addAttribute("haComprado", haComprado);
@@ -103,13 +123,30 @@ public class WebController {
     }
 
     @GetMapping("/nosotros")
-    public String mostrarNosotros() {
+    public String mostrarNosotros(Model model, HttpSession session) {
+
+        // Inyectar usuario si existe en sesión
+        String email = (String) session.getAttribute("usuarioActual");
+        if (email != null) {
+             Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+             if (usuarioOpt.isPresent()) {
+                 model.addAttribute("usuario", usuarioOpt.get());
+             }
+        }
 
         return "nosotros";
     }
 
     @GetMapping("/pago")
-    public String mostrarPago() {
+    public String mostrarPago(Model model, HttpSession session) {
+        // Inyectar usuario si existe en sesión
+        String email = (String) session.getAttribute("usuarioActual");
+        if (email != null) {
+             Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+             if (usuarioOpt.isPresent()) {
+                 model.addAttribute("usuario", usuarioOpt.get());
+             }
+        }
         return "pago";
     }
 

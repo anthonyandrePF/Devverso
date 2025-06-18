@@ -32,8 +32,16 @@
                                         <div class="small text-secondary" id="dropdownUserEmail" th:text="${usuario != null ? usuario.email : ''}">Email</div>
                                     </li>
                                     <li><hr class="dropdown-divider bg-secondary"></li>
+                                    <!-- Si es admin, mostrar solo Perfil Admin -->
                                     <li th:if="${usuario != null and usuario.role == 'ROLE_ADMIN'}">
                                         <a class="dropdown-item text-white" th:href="@{/perfil-admin}"><i class="bi bi-shield-lock"></i> Perfil Admin</a>
+                                    </li>
+                                    <!-- Si no es admin (por ejemplo, estudiante), mostrar Tu perfil y Tus cursos -->
+                                    <li th:if="${usuario != null and usuario.role != 'ROLE_ADMIN'}">
+                                        <a class="dropdown-item text-white" th:href="@{/perfil}"><i class="bi bi-person"></i> Tu perfil</a>
+                                    </li>
+                                    <li th:if="${usuario != null and usuario.role != 'ROLE_ADMIN'}">
+                                        <a class="dropdown-item text-white" th:href="@{/mis-cursos}"><i class="bi bi-journal-bookmark"></i> Tus cursos</a>
                                     </li>
                                     <li><hr class="dropdown-divider bg-secondary"></li>
                                     <li>
