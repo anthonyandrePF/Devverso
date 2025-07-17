@@ -93,15 +93,23 @@ public String guardarCurso(@ModelAttribute Curso curso,
 
     // Mostrar formulario para editar un curso
     @GetMapping("/edit/{id}")
-    public String mostrarFormularioEditar(@PathVariable Long id, Model model) {
+    public String mostrarFormularioEditar(@PathVariable Long id, Model model, HttpSession session) {
+        String email = (String) session.getAttribute("usuarioActual");
+        if (email == null) return "redirect:/?loginRequired=true";
+
+        Optional<Usuario> usuarioOpt = usuarioService.getByEmail(email);
+        if (usuarioOpt.isEmpty() || !"ROLE_ADMIN".equals(usuarioOpt.get().getRole())) {
+            return "redirect:/perfil?accessDenied=true";
+        }
+
         Curso curso = cursoService.findById(id);
         if (curso == null) {
             return "redirect:/perfil-admin";
         }
 
         model.addAttribute("curso", curso);
-        model.addAttribute("categorias", categoriaRepository.findAll()); // Agregar categorías al modelo
-        return "admin/formulario-curso"; // misma vista para agregar y editar
+        model.addAttribute("categorias", categoriaRepository.findAll());
+        return "admin/formulario-curso";
     }
 
     // Actualizar un curso editado

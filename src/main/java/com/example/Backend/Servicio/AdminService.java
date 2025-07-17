@@ -13,7 +13,7 @@ public class AdminService {
     @Autowired
     private CursoService cursoService;
 
-    @Autowired
+    @Autowired 
     private CompraRepository compraRepository;
 
     public List<Curso> obtenerCursos() {

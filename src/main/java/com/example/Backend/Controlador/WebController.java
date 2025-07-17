@@ -2,10 +2,12 @@ package com.example.Backend.Controlador;
 
 import com.example.Backend.Entidad.Curso;
 import com.example.Backend.Entidad.Usuario;
+import com.example.Backend.Entidad.Categoria;
 import com.example.Backend.Entidad.Compra;
 import com.example.Backend.Servicio.CursoService;
 import com.example.Backend.Repositorio.CompraRepository;
 import com.example.Backend.Repositorio.UsuarioRepository;
+import com.example.Backend.Repositorio.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +35,9 @@ public class WebController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+
     @GetMapping("/")
     public String mostrarIndex(Model model, HttpSession session) {
         List<Curso> cursos = cursoService.findAll();  
@@ -53,7 +58,9 @@ public class WebController {
     @GetMapping("/cursos")
     public String mostrarCursos(Model model, HttpSession session) {
         List<Curso> cursos = cursoService.findAll();
+        List<Categoria> categorias = categoriaRepository.findAll();
         model.addAttribute("cursos", cursos);
+        model.addAttribute("categorias", categorias);
         // Inyectar usuario si existe en sesión
         String email = (String) session.getAttribute("usuarioActual");
         if (email != null) {
@@ -244,5 +251,10 @@ public class WebController {
         // ...posibles datos adicionales para el administrador...
         model.addAttribute("usuario", usuario);
         return "perfil-admin"; // Se espera que exista la vista perfil-admin.html
+    }
+
+    @GetMapping("/403")
+    public String accesoDenegado() {
+        return "403";
     }
 }

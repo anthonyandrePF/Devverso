@@ -81,36 +81,56 @@
                             <li class="nav-item">
                                 <a class="nav-link text-white" th:href="@{/nosotros}">Nosotros</a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-person"></i>
-                                    <span id="usernameDisplay" th:text="${usuario != null ? usuario.nombre : 'Iniciar sesión'}">Iniciar sesión</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end bg-dark text-white" aria-labelledby="userDropdown" style="min-width: 220px;">
-                                    <li class="px-3 py-2">
-                                        <div class="fw-bold" id="dropdownUserName" th:text="${usuario != null ? usuario.nombre : 'Invitado'}">Ver Perfil</div>
-                                        <div class="small text-secondary" id="dropdownUserEmail" th:text="${usuario != null ? usuario.email : ''}">Email</div>
-                                    </li>
-                                    <li><hr class="dropdown-divider bg-secondary"></li>
-                                    <!-- Si es admin, mostrar solo Perfil Admin -->
-                                    <li th:if="${usuario != null and usuario.role == 'ROLE_ADMIN'}">
-                                        <a class="dropdown-item text-white" th:href="@{/perfil-admin}"><i class="bi bi-shield-lock"></i> Perfil Admin</a>
-                                    </li>
-                                    <!-- Si no es admin (por ejemplo, estudiante), mostrar Tu perfil y Tus cursos -->
-                                    <li th:if="${usuario != null and usuario.role != 'ROLE_ADMIN'}">
-                                        <a class="dropdown-item text-white" th:href="@{/perfil}"><i class="bi bi-person"></i> Tu perfil</a>
-                                    </li>
-                                    <li th:if="${usuario != null and usuario.role != 'ROLE_ADMIN'}">
-                                        <a class="dropdown-item text-white" th:href="@{/mis-cursos}"><i class="bi bi-journal-bookmark"></i> Tus cursos</a>
-                                    </li>
-                                    <li><hr class="dropdown-divider bg-secondary"></li>
-                                    <li>
-                                        <form method="post" action="/logout" class="d-inline">
-                                            <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </li>
+                             <!-- Si NO está logueado, mostrar "Iniciar sesión" -->
+                <li class="nav-item" th:if="${usuario == null}">
+                    <a class="nav-link text-white" th:href="@{/login}">
+                        <i class="bi bi-person"></i> Iniciar sesión
+                    </a>
+                </li>
+
+                <!-- Si está logueado, mostrar dropdown con su info -->
+                <li class="nav-item dropdown" th:if="${usuario != null}">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="bi bi-person"></i>
+                        <span th:text="${usuario.nombre}">Usuario</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end bg-dark text-white" aria-labelledby="userDropdown"
+                        style="min-width: 220px;">
+                        <li class="px-3 py-2">
+                            <div class="fw-bold" th:text="${usuario.nombre}">Nombre</div>
+                            <div class="small text-secondary" th:text="${usuario.email}">email@example.com</div>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider bg-secondary">
+                        </li>
+                        <li th:if="${usuario.role == 'ROLE_ADMIN'}">
+                            <a class="dropdown-item text-white" th:href="@{/perfil-admin}">
+                                <i class="bi bi-shield-lock"></i> Perfil Admin
+                            </a>
+                        </li>
+                        <li th:if="${usuario.role != 'ROLE_ADMIN'}">
+                            <a class="dropdown-item text-white" th:href="@{/perfil}">
+                                <i class="bi bi-person"></i> Tu perfil
+                            </a>
+                        </li>
+                        <li th:if="${usuario.role != 'ROLE_ADMIN'}">
+                            <a class="dropdown-item text-white" th:href="@{/mis-cursos}">
+                                <i class="bi bi-journal-bookmark"></i> Tus cursos
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider bg-secondary">
+                        </li>
+                        <li>
+                            <form method="get" th:action="@{/logout}" class="d-inline">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
                             <!-- Carrito -->
                             <li class="nav-item">
                                 <a class="nav-link text-white" href="#" data-bs-toggle="offcanvas" data-bs-target="#carrito">

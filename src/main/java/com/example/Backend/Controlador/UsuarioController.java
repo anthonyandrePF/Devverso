@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-// import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +19,9 @@ public class UsuarioController {
 
     private final UsuarioService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder; // ✅ Agregado para hashear
+
     public UsuarioController(UsuarioService userService) {
         this.userService = userService;
     }
@@ -27,22 +30,15 @@ public class UsuarioController {
         return referer.contains("?") ? referer + "&" + param + "=true" : referer + "?" + param + "=true";
     }
 
-    @PostMapping("/login")
-    public String login(@RequestParam String email,
-                        @RequestParam String password,
-                        HttpSession session,
-                        @RequestHeader(value="Referer", required=false) String referer) {
-        Optional<Usuario> userOpt = userService.authenticate(email, password);
-        if(userOpt.isPresent()){
-            Usuario usuario = userOpt.get();
-            session.setAttribute("usuarioActual", email);
-            if("ROLE_ADMIN".equals(usuario.getRole())){
-                return "redirect:/perfil-admin?loginSuccess=true";
-            } else if("ROLE_ESTUDIANTE".equals(usuario.getRole())){
-                return "redirect:/?loginSuccess=true";
-            }
-        }
-        return "redirect:" + (referer != null ? buildRedirectUrl(referer, "loginError") : "/?loginError=true");
+    @GetMapping("/login")
+    public String showLoginForm() {
+        return "login";
+    }
+
+
+    @GetMapping("/register")
+    public String showRegisterForm() {
+        return "register";
     }
 
     @PostMapping("/register")
@@ -59,7 +55,7 @@ public class UsuarioController {
         Usuario newUser = Usuario.builder()
                 .nombre(nombre)
                 .email(email)
-                .password(password)
+                .password(passwordEncoder.encode(password)) // ✅ Hashea la contraseña aquí
                 .build();
 
         userService.save(newUser);  
@@ -76,7 +72,7 @@ public class UsuarioController {
     public static class SesionController {
         @Autowired
         private UsuarioRepository usuarioRepository;
- 
+
         @GetMapping("/api/usuario/autenticado")
         public ResponseEntity<Map<String, Object>> verificarSesion(HttpSession session) {
             Map<String, Object> response = new HashMap<>();
@@ -133,10 +129,8 @@ public class UsuarioController {
         }
         userService.deleteById(userOpt.get().getId());
         session.invalidate(); // Cierra la sesión
-        // Devuelve la URL a la que debe redirigir el frontend
         Map<String, String> resp = new HashMap<>();
         resp.put("redirect", "/");
         return ResponseEntity.ok(resp);
     }
 }
-

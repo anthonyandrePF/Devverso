@@ -1,8 +1,12 @@
 package com.example.Backend.Servicio;
 
-
 import com.example.Backend.Entidad.Usuario;
 import com.example.Backend.Repositorio.UsuarioRepository;
+// import org.springframework.security.core.userdetails.UserDetails;
+// import org.springframework.security.core.userdetails.UserDetailsService;
+// import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,14 +15,15 @@ import java.util.Optional;
 public class UsuarioService {
 
     private final UsuarioRepository userRepository;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UsuarioService(UsuarioRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public Optional<Usuario> authenticate(String email, String password) {
+    public Optional<Usuario> authenticate(String email, String rawPassword) {
         return userRepository.findByEmail(email)
-                .filter(Usuario -> Usuario.getPassword().equals(password));
+                .filter(user -> passwordEncoder.matches(rawPassword, user.getPassword()));
     }
 
     public boolean existsByEmail(String email) {
@@ -26,6 +31,9 @@ public class UsuarioService {
     }
 
     public void save(Usuario user) {
+        if (!user.getPassword().startsWith("$2a$")) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         userRepository.save(user);
     }
 
@@ -37,4 +45,3 @@ public class UsuarioService {
         userRepository.deleteById(id);
     }
 }
-

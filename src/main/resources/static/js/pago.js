@@ -205,7 +205,7 @@ async function procesarPago() {
     localStorage.removeItem('carrito');
     carritoCursos = [];
     mostrarResumenCarrito();
-    window.location.href = '/perfil';
+    window.location.href = '/mis-cursos';
   });
 }
 

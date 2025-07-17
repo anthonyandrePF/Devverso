@@ -136,6 +136,12 @@
           </tbody>
         </table>
       </div>
+      <div class="mt-3 text-end">
+        <h5>
+          Total de ventas:
+          <span th:text="'S/ ' + ${#numbers.formatDecimal(totalVentas, 1, 2)}">S/ 0.00</span>
+        </h5>
+      </div>
     </div>
     </div>
   </div>

@@ -126,11 +126,11 @@ if (continuarCompraBtn) {
       if (!data.autenticado) {
         Swal.fire({
           icon: 'warning',
-          title: 'Debes iniciar sesión para continuar con la compra',
+          title: 'Debes iniciar sesión para proceder con la compra',
           confirmButtonText: 'Iniciar sesión'
         }).then((result) => {
           if (result.isConfirmed) {
-            mostrarModalLogin();
+            window.location.href = '/login'; // Redirige al login
           }
         });
         return;
@@ -163,7 +163,19 @@ if (continuarCompraBtn) {
 
     } catch (error) {
       console.error('Error al verificar sesión:', error);
-      Swal.fire('Error', 'Hubo un problema verificando tu sesión.', 'error');
+      if (error.status === 401) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Debes iniciar sesión para proceder con la compra',
+          confirmButtonText: 'Iniciar sesión'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/login';
+          }
+        });
+      } else {
+        Swal.fire('Error', 'Debes iniciar sesión para proceder con la compra.', 'error');
+      }
     }
   });
 }

@@ -30,7 +30,15 @@ public class AdminController {
             }
         }
         model.addAttribute("cursos", adminService.obtenerCursos());
-        model.addAttribute("ventas", adminService.obtenerVentas());
+        var ventas = adminService.obtenerVentas();
+        model.addAttribute("ventas", ventas);
+
+        // Calcular el total de ventas
+        double totalVentas = ventas.stream()
+            .mapToDouble(venta -> venta.getCurso().getPrecio().doubleValue())
+            .sum();
+        model.addAttribute("totalVentas", totalVentas);
+
         return "perfil-admin";
     }
 }
